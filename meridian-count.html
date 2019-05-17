@@ -54,15 +54,20 @@
     function doStuff(text) {
         let counts = {};
         text.split("\n").forEach((line) => {
-            const session = line.trim().split(",");
             // Ignore date at start
-            for (let i = 1; i < session.length; i++) {
-                const val = session[i].trim();
-                if (val in counts) {
-                    counts[val]++;
-                } else {
-                    counts[val] = 1;
-                }
+            const session = line.trim().split(":");
+            if (session.length > 1) {
+                const attendees = session[1].split(",");
+                attendees.forEach((who) => {
+                    const val = who.trim();
+                    if (val.length > 0) {
+                        if (val in counts) {
+                            counts[val]++;
+                        } else {
+                            counts[val] = 1;
+                        }
+                    }
+                });
             }
         });
         counts = Object.keys(counts).map((key) => {
