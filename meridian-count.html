@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hello Will</title>
+    <style type="text/css">
+        #wrapper {
+            display: grid;
+            grid-template-columns: 0.5fr 0.5fr;
+            grid-template-rows: 1fr;
+        }
+
+        #left {
+            grid-column-start: 1;
+        }
+
+        #right {
+            grid-column-start: 2;
+        }
+    </style>
+</head>
+<body>
+<!-- There's a reason I don't write user interfaces in my day job. -->
+<div id="wrapper">
+    <section id="left">
+        <h1>Training and tour attendance</h1>
+        <textarea id="input" cols="80" rows="40">13/01/10: Elvera, Pete, Russ, Junior, Kevin, Sean, Toks, Joe, Yohann, Troy, Will
+20/01/19: Elvera, Russ, Lukas, Benj, Pete, Jamie, Toks, Yohann, Troy, Will
+27/01/19: Sara, Elvera, Russ, Pete, Benj, Sean, Junior, Sam, Si, Paddy, Jamie, Troy, Will
+02/02/19: Sara, Polly, Nat Yeoh, Russ, Sean, Sam, Paddy, Jamie, Toks, Max, Yohann, Troy, Will
+10/02/19: Sara, Nat Podd, Russ, Sean, Sam, Jamie, Max, Yohann, Pottsie, Kevin, Andy, Troy
+17/02/19: Sara, Polly, Nat Yeoh, Coco, Russ, Sam, Max, Yohann, Andy, Paddy, Junior, Lukas, Jamie
+24/02/19: Coco, Nat Yeoh, Sam, Paddy, Lukas, Jamie, Pete, Pottsie, Ryan, Kevin, Johnny, Troy, Will
+03/03/19: Sara, Coco, Nat Yeoh, Elvera, Paddy, Jamie, Sean, Sam, Russ, Junior, Yohann, Jake, Troy, Will
+10/03/19: Sara, Coco, Elvera, Polly, Paddy, Sean, Sam, Yohann, Toks, Jake, Lukas, Troy, Will
+17/03/19: Sara, Coco, Polly, Sean, Sam, Yohann, Toks, Russ, Jamie, Junior, Pete, Troy, Will
+24/03/19: Sara, Coco, Elvera, Yohann, Toks, Pete, Jake, Paddy, Will
+31/03/19: Sara, Coco, Elvera, Nat Yeoh, Polly, Pete, Sam, Yohann, Paddy, Sean, Junior, Toks, Russ, Lukas, Jamie, Jake, Troy, Will
+07/04/19: Sara, Coco, Elvera, Polly, Bobby, Yohann, Toks, Pete, Paddy, Andy, Russ, Sam, Jamie, James Cooper, Will
+14/04/19: Sara, Coco, Bobby, Zara, Yohann, Toks, Sean, Junior, Troy, Will
+21/04/19: Sara, Elvera, Polly, Nat Yeoh, Toks, Sean, Russ, Sam, Troy, Will
+28/04/19: Sara, Coco, Elvera, Nat Yeoh, Polly, Ana, Toks, Sean, Sam, Yohann, Paddy, Lukas, Jamie, Troy, Will
+29/04/19: Sara, Coco, Elvera, Nat Yeoh, Bobby, Nat Podd, Ana, Toks, Sean, Yohann, Paddy, Lukas, Jamie, Ceri, Junior, Troy, Will
+05/05/19: Sara, Polly, Toks, Sean, Sam, Paddy, Jamie, Andy, Troy, Will
+12/05/19: Elvera, Nat Podd, Nat Yeoh, Pete, Ceri, Jamie, Lukas, Andy, Russ, Paddy, Will
+</textarea>
+    </section>
+    <section id="right">
+        <p id="output">
+        </p>
+    </section>
+</div>
+
+<script type="application/javascript">
+    function doStuff(text) {
+        let counts = {};
+        text.split("\n").forEach((line) => {
+            const session = line.trim().split(",");
+            // Ignore date at start
+            for (let i = 1; i < session.length; i++) {
+                const val = session[i].trim();
+                if (val in counts) {
+                    counts[val]++;
+                } else {
+                    counts[val] = 1;
+                }
+            }
+        });
+        counts = Object.keys(counts).map((key) => {
+            return {thing: key, count: counts[key]}
+        });
+        counts.sort((a, b) => a.count - b.count);
+
+        const ol = document.createElement("ol");
+        for (let i = counts.length - 1; i >= 0; i--) {
+            const what = counts[i];
+            const li = document.createElement("li");
+            const text = document.createTextNode(what.thing + ": " + what.count);
+            li.appendChild(text);
+            ol.appendChild(li);
+        }
+        const output = document.getElementById("output");
+        while (output.firstChild) {
+            output.removeChild(output.firstChild);
+        }
+        output.appendChild(ol);
+    }
+
+    (function () {
+        const input = document.getElementById("input");
+        input.addEventListener('input', (event) => doStuff(event.currentTarget.value));
+        doStuff(input.value);
+    })();
+</script>
+</body>
+</html>
